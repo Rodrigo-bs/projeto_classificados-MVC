@@ -3,6 +3,7 @@
     class Core {
         public function run() {
             $url = '/'.(isset($_GET['url']) ? $_GET['url'] : '');
+            $params = [];
 
             if ($url != '/') {
                 $url = explode('/', $url);
@@ -13,18 +14,20 @@
 
                 if (!empty($url[0])) {
                     $currentAction = $url[0];
+                    array_shift($url);
                 } else {
                     $currentAction = 'index';
                 }
 
+                if (count($url) > 0 && !empty($url[0])) {
+                    $params = $url;
+                }
             } else {
                 $currentController = 'homeController';
                 $currentAction = 'index';
             }
 
-            echo '<th>';
-            print_r($currentController);
-            echo '<br>';
-            print_r($currentAction);
+           $controller = new $currentController();
+           call_user_func_array([$controller, $currentAction], $params);
         }
     }
